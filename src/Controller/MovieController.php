@@ -53,7 +53,7 @@ final class MovieController extends AbstractController
     ];
 
 
-    #[Route('/movie', name: 'app_movie', methods: ['GET'])]
+    #[Route('/movies', name: 'app_movie', methods: ['GET'])]
     public function index(): Response
     {
         return $this->render('movie/index.html.twig', [
@@ -68,15 +68,16 @@ final class MovieController extends AbstractController
         return $this->render('movie/index.html.twig', ['tag' => $tag]);
     }
 
-    #[Route('/catalogue/{id}', name: 'app_movie_show', requirements: ['id' => '\d+'], methods: ['GET'])]
+    #[Route('/movie/{id}', name: 'app_movie_show', requirements: ['id' => '\d+'], methods: ['GET'])]
     public function showMovieDetail(int $id): Response
     {
-        return new Response('Affichage du film : ' . $id);
+        // return new Response('Affichage du film : ' . $id);
+        return $this->render('movie/index.html.twig', ['tag' => $id]);
     }
 
     #[Route('/api/catalogue', name: 'api_movie_list', methods: ['GET'])]
     public function APICatalogueShow(): Response
     {
-        return $this->json(["Film1", "Film2", "Film3"]);
+        return $this->json(self::MOVIES);
     }
 }
