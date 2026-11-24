@@ -8,7 +8,13 @@ final class LegacyBoxOfficeService
 {
     public function formatBadge(array $entry): string
     {
-        return '[' . strtoupper($entry['tag']) . '] ' . $entry['title'];
+        $tag = trim((string) ($entry['tag'] ?? ''));
+
+        if ($tag === '') {
+            $tag = 'STANDARD';
+        }
+
+        return '[' . strtoupper($tag) . '] ' . $entry['title'];
     }
 
     /**
@@ -16,18 +22,24 @@ final class LegacyBoxOfficeService
      */
     public function calculateAverageRating(array $ratings): float
     {
-        $average = array_sum($ratings) / count($ratings);
+        $validRatings = array_filter($ratings, static fn($rating) => $rating !== null);
 
-        return round($average, 1);
+        if (count($validRatings) === 0) {
+            return 0.0;
+        }
+
+        return round(array_sum($validRatings) / count($validRatings), 1);
     }
 
     public function calculateTicketPrice(float $basePrice, int $age, bool $isMember): float
     {
         $price = $basePrice;
 
-        if ($age < 18 || $age > 65) {
+        if ($age < 18 || $age >= 65) {
             $price *= 0.75;
-        } elseif ($isMember) {
+        }
+
+        if ($isMember) {
             $price *= 0.80;
         }
 
